@@ -4,13 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/joho/godotenv"
-
 	"potato-dev/api"
 )
 
 func main() {
-	_ = godotenv.Load() // optional for local .env; Koyeb uses secrets
 
 	// Secrets are validated when endpoints are called (not at startup)
 	// In Koyeb: add env vars that reference secrets, e.g. OPENAI_API_KEY={{ secret.OPENAI_API_KEY }}

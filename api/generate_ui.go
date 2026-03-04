@@ -3,6 +3,8 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"os"
+	"strings"
 
 	"potato-dev/ai"
 )
@@ -14,6 +16,11 @@ type GenerateUIRequest struct {
 func GenerateUI(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if strings.TrimSpace(os.Getenv("OPENAI_API_KEY")) == "" {
+		http.Error(w, "OpenAI API key missing: ensure Koyeb secret OPENAI_API_KEY is set", http.StatusInternalServerError)
 		return
 	}
 
