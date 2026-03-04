@@ -14,6 +14,7 @@ func main() {
 
 	http.HandleFunc("/generate-app", api.GenerateApp)
 	http.HandleFunc("/generate-ui", api.GenerateUI)
+	http.Handle("/", http.FileServer(http.Dir("static")))
 
 	log.Println("Server running on :8080")
 

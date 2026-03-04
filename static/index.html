@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-200 flex flex-col items-center p-10 min-h-screen">
+  <div class="w-full max-w-md mb-6">
+    <form id="promptForm" class="flex gap-2">
+      <input
+        type="text"
+        id="promptInput"
+        placeholder="Describe the UI you want..."
+        class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      />
+      <button
+        type="submit"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+      >
+        Generate
+      </button>
+    </form>
+    <p id="status" class="mt-2 text-sm text-gray-600"></p>
+  </div>
+
+  <!-- Mobile Frame Preview -->
+  <div class="bg-black p-3 rounded-[40px] shadow-xl">
+    <div id="phone" class="bg-white rounded-[30px] overflow-hidden w-[375px] min-h-[600px]">
+      <p class="p-8 text-gray-400 text-center">Enter a prompt and click Generate to preview</p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('promptForm');
+    const promptInput = document.getElementById('promptInput');
+    const phone = document.getElementById('phone');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const prompt = promptInput.value.trim();
+      if (!prompt) return;
+
+      status.textContent = 'Generating...';
+      phone.innerHTML = '<div class="flex items-center justify-center min-h-[600px]"><div class="animate-pulse text-gray-500">Loading...</div></div>';
+
+      try {
+        const res = await fetch('/generate-ui', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || data.message || res.statusText);
+
+        phone.innerHTML = data.html;
+        status.textContent = 'Done!';
+      } catch (err) {
+        phone.innerHTML = `<p class="p-8 text-red-500 text-center">Error: ${err.message}</p>`;
+        status.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
