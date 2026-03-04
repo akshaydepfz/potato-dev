@@ -28,6 +28,7 @@ func main() {
 	}
 
 	http.HandleFunc("/generate-app", api.GenerateApp)
+	http.HandleFunc("/generate-ui", api.GenerateUI)
 
 	log.Println("Server running on :8080")
 
