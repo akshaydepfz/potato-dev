@@ -3,7 +3,9 @@ package ai
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
+	"strings"
 
 	openai "github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
@@ -21,7 +23,10 @@ func Generate(requirement string, onStatus func(string)) ([]utils.File, error) {
 	}
 
 	status("Generating app with AI...")
-	apiKey := os.Getenv("OPENAI_API_KEY")
+	apiKey := strings.TrimSpace(os.Getenv("OPENAI_API_KEY"))
+	if apiKey == "" {
+		return nil, fmt.Errorf("OpenAI API key missing: ensure Koyeb secret OPENAI_API_KEY is set")
+	}
 
 	client := openai.NewClient(
 		option.WithAPIKey(apiKey),

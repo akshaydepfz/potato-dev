@@ -9,7 +9,10 @@ import (
 )
 
 func CreateRepo(repoName string) error {
-	token := os.Getenv("GITHUB_TOKEN")
+	token := strings.TrimSpace(os.Getenv("GITHUB_TOKEN"))
+	if token == "" {
+		return fmt.Errorf("GitHub token missing: ensure Koyeb secret GITHUB_TOKEN is set")
+	}
 	body := fmt.Sprintf(`{"name":"%s","private":false}`, repoName)
 
 	req, err := http.NewRequest(
@@ -35,8 +38,11 @@ func CreateRepo(repoName string) error {
 }
 
 func Push(projectDir string, repoName string) error {
-	username := os.Getenv("GITHUB_USERNAME")
-	token := os.Getenv("GITHUB_TOKEN")
+	username := strings.TrimSpace(os.Getenv("GITHUB_USERNAME"))
+	token := strings.TrimSpace(os.Getenv("GITHUB_TOKEN"))
+	if username == "" || token == "" {
+		return fmt.Errorf("GitHub credentials missing: ensure Koyeb secrets GITHUB_USERNAME and GITHUB_TOKEN are set")
+	}
 
 	repoURL := fmt.Sprintf(
 		"https://%s:%s@github.com/%s/%s.git",
@@ -70,7 +76,10 @@ func Push(projectDir string, repoName string) error {
 }
 
 func RepoURL(repoName string) string {
-	username := os.Getenv("GITHUB_USERNAME")
+	username := strings.TrimSpace(os.Getenv("GITHUB_USERNAME"))
+	if username == "" {
+		return ""
+	}
 	return fmt.Sprintf("https://github.com/%s/%s", username, repoName)
 }
 
